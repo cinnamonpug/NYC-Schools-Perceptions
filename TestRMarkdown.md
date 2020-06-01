@@ -6,34 +6,49 @@ output:
   html_document: 
     keep_md: yes
 ---
+The dataset is publicly available at:
+combined.csv: https://data.world/dataquest/nyc-schools-data/workspace/file?filename=combined.csv
+NYC school survey data for 2011: https://data.cityofnewyork.us/Education/2011-NYC-School-Survey/mnz3-dyi8
+
+We will try to answer the following questions:
+
+Do student, teacher, and parent perceptions of NYC school quality appear to be related to demographic and academic success metrics?
+
+Do students, teachers, and parents have similar perceptions of NYC school quality?
 
 
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+First, let's load the required libraries:
 
 
 ```r
-summary(cars)
+library(readr)
+library(dplyr)
 ```
 
 ```
-##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00
+## 
+## Attaching package: 'dplyr'
 ```
 
-## Including Plots
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
 
-You can also embed plots, for example:
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
 
-![](TestRMarkdown_files/figure-html/pressure-1.png)<!-- -->
+```r
+library(purrr)
+library(ggplot2)
+library(stringr)
+library(tidyr)
+```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
