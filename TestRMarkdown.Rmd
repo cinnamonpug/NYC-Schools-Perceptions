@@ -6,27 +6,34 @@ output:
   html_document: 
     keep_md: yes
 ---
+The dataset is publicly available at:
+combined.csv: https://data.world/dataquest/nyc-schools-data/workspace/file?filename=combined.csv
+NYC school survey data for 2011: https://data.cityofnewyork.us/Education/2011-NYC-School-Survey/mnz3-dyi8
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+We will try to answer the following questions:
+
+Do student, teacher, and parent perceptions of NYC school quality appear to be related to demographic and academic success metrics?
+
+Do students, teachers, and parents have similar perceptions of NYC school quality?
+
+
+First, let's load the required libraries:
+
+```{r}
+library(readr)
+library(dplyr)
+library(purrr)
+library(ggplot2)
+library(stringr)
+library(tidyr)
+
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+Let's import the data that we cleaned from the previous courses.
 
-```{r cars}
-summary(cars)
+```{r}
+combined <- read_csv(file.choose())
+
 ```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
