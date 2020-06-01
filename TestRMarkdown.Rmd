@@ -49,3 +49,140 @@ Let's check out the data that we've imported:
 head(masterfile1_gened,5)
 head(masterfile1_d75,5)
 ```
+
+We can see that the dataframes contain columns that are not relevant to our analysis. Let's create a dataframe by selecting only the relevant columns.
+
+
+```{r}
+gened <- masterfile1_gened %>%
+  filter(schooltype == "High School") %>%
+  select(DBN = dbn, schoolname, rr_s:aca_tot_11)
+
+head(gened,5)
+```
+
+Next, we'll simplify the d75 dataframe.
+
+```{r}
+d75 <- masterfile1_d75 %>%
+  select(DBN=dbn,schoolname,studentssurveyed:aca_tot_11)
+
+head(d75,5)
+```
+
+We can now combine the gened and d75 dataframes as we have scaled down the number of columns.
+
+```{r}
+survey <- bind_rows(gened,d75)
+
+survey
+```
+
+
+Let's combine the survey dataframe with our combined df using left join so that we can retain all observations in the combined df and those matching records in the survey df.The key for our join is the DBN variable which exists in all our dataframes.
+
+
+```{r}
+
+combinedsurvey <- combined %>%
+  left_join(survey, by = "DBN")
+
+combinedsurvey
+```
+
+
+Let's look for relationships between variables by creating a correlation marix.
+
+```{r}
+corr_mat <- combinedsurvey %>%    
+  select(avg_sat_score, saf_p_11:aca_tot_11) %>%
+  cor(use = "pairwise.complete.obs")
+
+corr_mat
+```
+
+Convert matrix to tibble to allow for easier interpretation.
+
+```{r}
+corr_tibble <- corr_mat %>%
+  as_tibble(rownames = "variable")
+
+corr_tibble
+```
+
+
+Filter for strong correlations bet `avg_sat_score` and other variables: greater than 0.25 or less than -0.25 
+
+```{r}
+strong_cor <- corr_tibble %>%
+  select(variable, avg_sat_score) %>%
+  filter(avg_sat_score > 0.25 | avg_sat_score < -0.25)
+
+strong_cor
+```
+
+Create scatterplots to visualize relationships.
+
+```{r}
+#create a function to efficiently create scatterplots
+scattergen <- function(x,y) {
+  ggplot(data=combinedsurvey) +
+    aes_string(x = x,y = y) +
+    geom_point(alpha=0.3) +
+    theme(panel.background = element_rect(fill = "white"))
+}
+
+strong_cor$variable
+
+y_var = strong_cor$variable[1]
+x_var = strong_cor$variable[2:5]
+
+y_var
+x_var
+
+
+map2(x_var,y_var,scattergen)
+
+
+```
+
+
+From the scatterplots, we can see that there is a positive relationship between avg_sat_score and saf_t_11 (Safety and Respect score based on teacher responses), saf_s_11(safety and respect score based on student responses), aca_s_11 (academic expectations score based on student responses) and saf_tot_11 (safety and respect total score).
+
+
+Our next step is to reshape the data with the so that the survey question (e.g., saf_p_11) and the corresponding score are in two separate columns:
+
+```{r}
+combinedlong <- combinedsurvey %>%
+  pivot_longer(cols = c(saf_p_11:aca_tot_11), names_to = "survey_question", values_to = "score" )
+
+combinedlong
+```
+
+Next, we will create a new variable to indicate the different response types for parent, teacher, student and total.We will call this variable response_type. We will also create a new variable "metric" which is also derived from the survey_question variable.
+
+```{r}
+
+combinedlong <-  combinedlong %>%
+  mutate(response_type = ifelse(substr(survey_question,4,6) == "_p_", "parent",
+                                ifelse(substr(survey_question,4,6) == "_s_", "student",
+                                       ifelse(substr(survey_question,4,6) == "_t_", "teacher",
+                                              ifelse(substr(survey_question,4,6) == "_to","total", "NA"))))) %>%
+  mutate(metric = ifelse(substr(survey_question,1,3) == "eng", "engagement",
+                         ifelse(substr(survey_question,1,3) == "aca", "academic",
+                                ifelse(substr(survey_question,1,3) == "saf", "safety", "communication"))))
+
+combinedlong
+```
+
+Let's visualize the differences between the responses of parents, teachers and students with respect to the metric:
+
+```{r}
+vizdata <- combinedlong %>%
+  filter(response_type != "total")
+
+ggplot(data=vizdata) +
+  aes(x=metric, y=score, fill = response_type) +
+  geom_boxplot()
+```
+
