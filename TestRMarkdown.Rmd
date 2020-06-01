@@ -2,9 +2,7 @@
 title: "My Test R Markdown"
 author: "AA"
 date: "31/05/2020"
-output: 
-  html_document: 
-    keep_md: yes
+output: github_document
 ---
 The dataset is publicly available at:
 combined.csv: https://data.world/dataquest/nyc-schools-data/workspace/file?filename=combined.csv
@@ -29,6 +27,11 @@ library(tidyr)
 
 ```
 
+Let's import the data that we cleaned from the previous courses.
 
+```{r}
+combined <- read_csv("combined.csv")
+
+```
 
 
