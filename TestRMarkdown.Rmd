@@ -34,4 +34,18 @@ combined <- read_csv("combined.csv")
 
 ```
 
+Next, we'll import the survey data. The txt survey data is separated by tabs so we will use read_tsv() from the readr library to import the files masterfile11_gened_final.txt and masterfile11_d75_final.txt
 
+```{r}
+masterfile1_gened <- read_tsv("masterfile11_gened_final.txt")
+masterfile1_d75 <- read_tsv("masterfile11_d75_final.txt")
+```
+
+
+Let's check out the data that we've imported:
+
+
+```{r}
+head(masterfile1_gened,5)
+head(masterfile1_d75,5)
+```
