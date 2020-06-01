@@ -28,12 +28,3 @@ library(stringr)
 library(tidyr)
 
 ```
-
-
-
-Let's import the data that we cleaned from the previous courses.
-
-```{r}
-combined <- read_csv(file.choose())
-
-```
